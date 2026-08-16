@@ -1,0 +1,10 @@
+ID,Date,Category,Amount,Description,PaymentMethod
+exp_1786886011068_f4a046,2026-08-01,Groceries,1450.00,Weekly grocery shopping from supermarket,UPI
+exp_1786886011070_91d3c7,2026-08-03,Food & Dining,420.50,Lunch with college team,UPI
+exp_1786886011072_167597,2026-08-05,Transportation,250.00,Metro recharge card,Debit Card
+exp_1786886011076_1f9952,2026-08-07,Utilities & Bills,1200.00,Monthly internet fiber broadband,Net Banking
+exp_1786886011082_b4d2f5,2026-08-10,Entertainment,599.00,Movie tickets and popcorn,Credit Card
+exp_1786886011084_0d69ca,2026-08-12,Shopping,2150.00,New running shoes & accessories,Credit Card
+exp_1786886011085_6edb74,2026-08-14,Healthcare,380.00,Prescription medicines and vitamins,Cash
+exp_1786886011088_96872c,2026-08-15,Education,999.00,Python Web Development Bootcamp course,UPI
+exp_1786886011090_f84bed,2026-08-16,Food & Dining,180.00,Evening coffee and snacks,UPI

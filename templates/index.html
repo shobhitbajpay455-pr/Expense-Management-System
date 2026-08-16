@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker | Capstone Management System</title>
+    <meta name="description" content="A modern, intuitive expense management system to track, categorize, calculate, and analyze your personal and project expenditures.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand-group">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="3"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                        <circle cx="7" cy="15" r="1"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">ExpenseHub</h1>
+                    <p class="brand-subtitle">Capstone Expense Management System</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button id="btn-open-calc" class="btn btn-secondary" title="Open Quick Financial Calculator">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M8 10h.01"></path><path d="M12 10h.01"></path><path d="M16 10h.01"></path><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path></svg>
+                    <span>Calculator</span>
+                </button>
+                <button id="btn-open-splitter" class="btn btn-secondary" title="Split bill among friends">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <span>Split Bill</span>
+                </button>
+                <button id="btn-seed-data" class="btn btn-secondary" title="Load sample demo transactions">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
+                    <span>Sample Data</span>
+                </button>
+                <button id="btn-import-modal" class="btn btn-secondary" title="Import expenses from CSV file">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span>Import CSV</span>
+                </button>
+                <a href="/export-csv" class="btn btn-secondary" title="Download data as CSV" download>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>Export CSV</span>
+                </a>
+                <button id="btn-open-add-modal" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Add Expense</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+        <!-- Monthly Budget & Spending Limit Banner -->
+        <section class="budget-card" aria-label="Monthly Budget Tracker">
+            <div class="budget-info-row">
+                <div class="budget-main-details">
+                    <div class="budget-title-wrap">
+                        <span class="budget-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </span>
+                        <div>
+                            <h2 class="budget-title">Monthly Budget Planner</h2>
+                            <p class="budget-subtitle" id="budget-month-label">Current Month Progress</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="budget-stats-group">
+                    <div class="budget-stat-item">
+                        <span class="stat-label">Budget Target</span>
+                        <div class="stat-val-inline">
+                            <span class="stat-val" id="budget-target-val">₹25,000.00</span>
+                            <button id="btn-edit-budget" class="icon-action-btn" title="Set monthly budget">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="budget-stat-item">
+                        <span class="stat-label">Spent This Month</span>
+                        <span class="stat-val" id="budget-spent-val">₹0.00</span>
+                    </div>
+                    <div class="budget-stat-item">
+                        <span class="stat-label">Remaining Balance</span>
+                        <span class="stat-val stat-positive" id="budget-remaining-val">₹25,000.00</span>
+                    </div>
+                    <div class="budget-stat-item">
+                        <span class="stat-label">Safe Daily Spend</span>
+                        <span class="stat-val" id="budget-daily-val">₹833.00/day</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar-container">
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="budget-progress-fill" style="width: 0%;"></div>
+                </div>
+                <div class="progress-labels">
+                    <span id="budget-progress-text">0% of budget used</span>
+                    <span id="budget-status-text">Within Safe Limit</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- KPI Metrics Grid -->
+        <section class="metrics-grid" aria-label="Key Expense Metrics">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-label">Total Expenditure</span>
+                    <span class="metric-icon-wrap total-spend-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </span>
+                </div>
+                <div class="metric-value" id="kpi-total-amount">₹0.00</div>
+                <div class="metric-footer">Lifetime logged spending</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-label">Total Transactions</span>
+                    <span class="metric-icon-wrap transactions-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </span>
+                </div>
+                <div class="metric-value" id="kpi-total-count">0</div>
+                <div class="metric-footer">Total recorded items</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-label">Average Spending</span>
+                    <span class="metric-icon-wrap avg-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    </span>
+                </div>
+                <div class="metric-value" id="kpi-avg-amount">₹0.00</div>
+                <div class="metric-footer">Per transaction average</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-label">Top Category</span>
+                    <span class="metric-icon-wrap top-cat-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </span>
+                </div>
+                <div class="metric-value" id="kpi-top-category">None</div>
+                <div class="metric-footer">Highest spending sector</div>
+            </div>
+        </section>
+
+        <!-- Charts Row -->
+        <section class="analytics-row">
+            <div class="chart-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">Spending by Category</h2>
+                        <p class="panel-subtitle">Expense distribution across categories</p>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">Monthly Spending Trend</h2>
+                        <p class="panel-subtitle">Historical spending progression</p>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transactions Section -->
+        <section class="transactions-section">
+            <div class="section-card">
+                <div class="section-toolbar">
+                    <div class="toolbar-left">
+                        <h2 class="section-title">Expense History</h2>
+                        <span class="badge" id="results-count-badge">0 items</span>
+                    </div>
+
+                    <div class="toolbar-filters">
+                        <!-- Search Bar -->
+                        <div class="search-box">
+                            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="search-input" placeholder="Search description, category..." autocomplete="off">
+                            <button id="clear-search-btn" class="clear-btn" style="display:none;" title="Clear search">&times;</button>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="select-wrapper">
+                            <select id="filter-category" aria-label="Filter by category">
+                                <option value="all">All Categories</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort Filter -->
+                        <div class="select-wrapper">
+                            <select id="sort-select" aria-label="Sort expenses">
+                                <option value="Date-desc">Date (Newest First)</option>
+                                <option value="Date-asc">Date (Oldest First)</option>
+                                <option value="Amount-desc">Amount (Highest First)</option>
+                                <option value="Amount-asc">Amount (Lowest First)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expense Table -->
+                <div class="table-responsive">
+                    <table class="expense-table" id="expense-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Payment Method</th>
+                                <th class="text-right">Amount</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expense-table-body">
+                            <!-- Populated dynamically via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <div class="empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="3"></rect><line x1="8" y1="2" x2="8" y2="6"></line><line x1="16" y1="2" x2="16" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                    <h3 class="empty-title">No expenses found</h3>
+                    <p class="empty-desc">Get started by logging your first expense or generate sample data.</p>
+                    <button class="btn btn-primary" onclick="openAddModal()">Add Your First Expense</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>Expense Management System &copy; 2026 | Capstone Project by <strong>Shobhit Bajpay</strong></p>
+    </footer>
+
+    <!-- Quick Financial Calculator Modal -->
+    <div id="calc-modal" class="modal" aria-hidden="true" role="dialog">
+        <div class="modal-backdrop" id="calc-backdrop"></div>
+        <div class="modal-dialog modal-calc">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Financial Calculator</h3>
+                    <button type="button" class="close-btn" id="btn-close-calc">&times;</button>
+                </div>
+                <div class="calculator-body">
+                    <div class="calc-display-container">
+                        <div class="calc-history" id="calc-history"></div>
+                        <input type="text" id="calc-display" class="calc-display" value="0" readonly>
+                    </div>
+                    <div class="calc-keypad">
+                        <button class="calc-key key-func" data-action="clear">C</button>
+                        <button class="calc-key key-func" data-action="backspace">⌫</button>
+                        <button class="calc-key key-func" data-action="percent">%</button>
+                        <button class="calc-key key-op" data-action="divide">÷</button>
+
+                        <button class="calc-key key-num" data-val="7">7</button>
+                        <button class="calc-key key-num" data-val="8">8</button>
+                        <button class="calc-key key-num" data-val="9">9</button>
+                        <button class="calc-key key-op" data-action="multiply">×</button>
+
+                        <button class="calc-key key-num" data-val="4">4</button>
+                        <button class="calc-key key-num" data-val="5">5</button>
+                        <button class="calc-key key-num" data-val="6">6</button>
+                        <button class="calc-key key-op" data-action="subtract">−</button>
+
+                        <button class="calc-key key-num" data-val="1">1</button>
+                        <button class="calc-key key-num" data-val="2">2</button>
+                        <button class="calc-key key-num" data-val="3">3</button>
+                        <button class="calc-key key-op" data-action="add">+</button>
+
+                        <button class="calc-key key-num key-zero" data-val="0">0</button>
+                        <button class="calc-key key-num" data-val=".">.</button>
+                        <button class="calc-key key-equal" data-action="calculate">=</button>
+                    </div>
+                    <div class="calc-actions">
+                        <button id="btn-transfer-calc" class="btn btn-primary btn-block">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span>Use Amount in Add Expense</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bill Splitter Modal -->
+    <div id="splitter-modal" class="modal" aria-hidden="true" role="dialog">
+        <div class="modal-backdrop" id="splitter-backdrop"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Split Bill & Group Calculator</h3>
+                    <button type="button" class="close-btn" id="btn-close-splitter">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="split-total">Total Bill Amount (₹) <span class="req">*</span></label>
+                            <input type="number" id="split-total" min="1" step="0.01" placeholder="e.g. 1800">
+                        </div>
+                        <div class="form-group">
+                            <label for="split-people">Number of People <span class="req">*</span></label>
+                            <input type="number" id="split-people" min="1" step="1" value="2">
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="split-tip">Tip / Gratuity (%)</label>
+                            <select id="split-tip">
+                                <option value="0">0% (No Tip)</option>
+                                <option value="5">5%</option>
+                                <option value="10" selected>10%</option>
+                                <option value="15">15%</option>
+                                <option value="20">20%</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="split-tax">Tax / GST (%)</label>
+                            <select id="split-tax">
+                                <option value="0">0%</option>
+                                <option value="5">5% (GST)</option>
+                                <option value="12">12% (GST)</option>
+                                <option value="18">18% (GST)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="splitter-result-card">
+                        <div class="split-result-row main-split">
+                            <span>Each Person Pays:</span>
+                            <strong id="split-per-person">₹0.00</strong>
+                        </div>
+                        <div class="split-breakdown">
+                            <div class="split-detail"><span>Base Share:</span> <span id="split-base-share">₹0.00</span></div>
+                            <div class="split-detail"><span>Tip Total:</span> <span id="split-tip-total">₹0.00</span></div>
+                            <div class="split-detail"><span>Tax Total:</span> <span id="split-tax-total">₹0.00</span></div>
+                            <div class="split-detail"><span>Grand Total:</span> <span id="split-grand-total">₹0.00</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-splitter">Close</button>
+                    <button type="button" class="btn btn-primary" id="btn-split-to-expense">
+                        <span>Add My Share as Expense</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Monthly Budget Modal -->
+    <div id="budget-modal" class="modal" aria-hidden="true" role="dialog">
+        <div class="modal-backdrop" id="budget-backdrop"></div>
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Set Monthly Budget</h3>
+                    <button type="button" class="close-btn" id="btn-close-budget-modal">&times;</button>
+                </div>
+                <form id="budget-form">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="input-budget-target">Monthly Spending Limit (₹)</label>
+                            <input type="number" id="input-budget-target" min="500" step="100" placeholder="25000" required>
+                            <span class="form-hint">Track your spending against this target limit each month.</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-budget">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Budget</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add / Edit Expense Modal -->
+    <div id="expense-modal" class="modal" aria-hidden="true" role="dialog">
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title" class="modal-title">Add New Expense</h3>
+                    <button type="button" class="close-btn" id="btn-close-modal" aria-label="Close modal">&times;</button>
+                </div>
+                <form id="expense-form">
+                    <input type="hidden" id="form-expense-id">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="form-date">Date <span class="req">*</span></label>
+                            <input type="date" id="form-date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="form-amount">Amount (₹) <span class="req">*</span></label>
+                            <input type="number" id="form-amount" step="0.01" min="0.01" placeholder="0.00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="form-category">Category <span class="req">*</span></label>
+                            <select id="form-category" required>
+                                <!-- Categories populated dynamically -->
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="form-payment">Payment Method</label>
+                            <select id="form-payment">
+                                <!-- Payment methods populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form-description">Description / Note <span class="req">*</span></label>
+                        <input type="text" id="form-description" placeholder="e.g. Lunch with team, Groceries from store" required>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-expense">
+                            <span id="save-btn-text">Save Expense</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" aria-hidden="true" role="dialog">
+        <div class="modal-backdrop" id="delete-backdrop"></div>
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Delete Expense</h3>
+                    <button type="button" class="close-btn" id="btn-close-delete-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this expense record?</p>
+                    <div class="delete-preview" id="delete-preview-content">
+                        <!-- Preview info inserted here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-delete">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="btn-confirm-delete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import CSV Modal -->
+    <div id="import-modal" class="modal" aria-hidden="true" role="dialog">
+        <div class="modal-backdrop" id="import-backdrop"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Import Expenses from CSV</h3>
+                    <button type="button" class="close-btn" id="btn-close-import-modal">&times;</button>
+                </div>
+                <form id="import-form">
+                    <div class="modal-body">
+                        <p class="form-hint">Upload a CSV file containing columns: Date, Category, Amount, Description, PaymentMethod.</p>
+                        <div class="file-upload-area" id="file-drop-zone">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p>Choose a CSV file to upload</p>
+                            <input type="file" id="csv-file-input" accept=".csv" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-import">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btn-submit-import">Import Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- Custom Script -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
